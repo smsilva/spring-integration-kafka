@@ -66,7 +66,15 @@ docker run \
   --rm \
   --network host \
   --env SERVER_PORT=8083 \
-  --env SPRING_KAFKA_CONSUMER_GROUP_ID="events" \
+  --env SPRING_KAFKA_CONSUMER_GROUP_ID="orders" \
   --env SPRING_KAFKA_BOOTSTRAP_SERVERS="localhost:9092" \
   wasp-kafka-consumer:latest
+```
+
+```bash
+kafka-consumer-groups.sh \
+  --bootstrap-server localhost:9092 \
+  --describe \
+  --group events --group orders \
+  --offsets
 ```
