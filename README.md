@@ -18,7 +18,7 @@ docker run \
 kafka-topics.sh \
   --create \
   --topic quickstart-events \
-  --partitions 3 \
+  --partitions 2 \
   --bootstrap-server localhost:9092
 ```
 
@@ -50,7 +50,7 @@ docker run \
   --rm \
   --network host \
   --env SERVER_PORT=8081 \
-  --env SPRING_KAFKA_CONSUMER_GROUP_ID="wasp.run.group.primary" \
+  --env SPRING_KAFKA_CONSUMER_GROUP_ID="events" \
   --env SPRING_KAFKA_BOOTSTRAP_SERVERS="localhost:9092" \
   wasp-kafka-consumer:latest
   
@@ -58,7 +58,15 @@ docker run \
   --rm \
   --network host \
   --env SERVER_PORT=8082 \
-  --env SPRING_KAFKA_CONSUMER_GROUP_ID="wasp.run.group.secondary" \
+  --env SPRING_KAFKA_CONSUMER_GROUP_ID="events" \
+  --env SPRING_KAFKA_BOOTSTRAP_SERVERS="localhost:9092" \
+  wasp-kafka-consumer:latest
+  
+docker run \
+  --rm \
+  --network host \
+  --env SERVER_PORT=8083 \
+  --env SPRING_KAFKA_CONSUMER_GROUP_ID="events" \
   --env SPRING_KAFKA_BOOTSTRAP_SERVERS="localhost:9092" \
   wasp-kafka-consumer:latest
 ```
