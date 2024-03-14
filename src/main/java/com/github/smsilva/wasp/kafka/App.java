@@ -41,6 +41,7 @@ public class App {
 		ContainerProperties properties = new ContainerProperties("quickstart-events");
 		properties.setAckMode(ContainerProperties.AckMode.RECORD);
 		properties.setGroupId(groupId);
+		properties.setClientId("wasp");
 		return new KafkaMessageListenerContainer<>(consumerFactory, properties);
 	}
 
