@@ -44,6 +44,8 @@ kafka-console-consumer.sh \
 ```
 
 ```bash
+mvn package && docker build -t wasp-kafka-consumer .
+
 docker run \
   --rm \
   --network host \
