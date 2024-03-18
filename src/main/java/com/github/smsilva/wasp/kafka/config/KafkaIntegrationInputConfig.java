@@ -10,7 +10,7 @@ import org.springframework.messaging.SubscribableChannel;
 import static org.springframework.integration.kafka.inbound.KafkaMessageDrivenChannelAdapter.ListenerMode.record;
 
 @Configuration
-public class KafkaIntegrationConfig {
+public class KafkaIntegrationInputConfig {
 
     @Bean(Channels.EVENTS_INPUT)
     public SubscribableChannel kafkaInput() {

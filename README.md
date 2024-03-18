@@ -101,3 +101,25 @@ kafka-consumer-groups.sh \
   --group orders \
   --offsets
 ```
+
+```bash
+kafka-topics.sh \
+  --bootstrap-server localhost:9092 \
+  --create \
+  --topic "events-outbound" \
+  --partitions 2
+```
+
+```bash
+kafka-console-consumer.sh \
+  --bootstrap-server localhost:9092 \
+  --topic "events-outbound" \
+  --from-beginning
+```
+
+```bash
+kafka-console-producer.sh \
+  --bootstrap-server localhost:9092 \
+  --topic "events-outbound" \
+  --batch-size 1
+```

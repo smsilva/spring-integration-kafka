@@ -1,3 +1,7 @@
+kafka:
+  topic: "events-outbound"
+  messageKey: "si.key"
+
 spring:
   application:
     name: spring-integration-kafka
