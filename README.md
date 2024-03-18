@@ -32,31 +32,31 @@ docker run \
 
 ```bash
 kafka-topics.sh \
+  --bootstrap-server localhost:9092 \
   --create \
-  --topic quickstart-events \
-  --partitions 2 \
-  --bootstrap-server localhost:9092
+  --topic "quickstart-events" \
+  --partitions 2
 ```
 
 ```bash
 kafka-topics.sh \
+  --bootstrap-server localhost:9092 \
   --describe \
-  --topic quickstart-events \
-  --bootstrap-server localhost:9092
+  --topic "quickstart-events"
 ```
 
 ```bash
 kafka-console-producer.sh \
-  --topic quickstart-events \
-  --batch-size 1 \
-  --bootstrap-server localhost:9092
+  --bootstrap-server localhost:9092 \
+  --topic "quickstart-events" \
+  --batch-size 1
 ```
 
 ```bash
 kafka-console-consumer.sh \
-  --topic quickstart-events \
-  --from-beginning \
-  --bootstrap-server localhost:9092
+  --bootstrap-server localhost:9092 \
+  --topic "quickstart-events" \
+  --from-beginning
 ```
 
 ```bash
@@ -66,6 +66,7 @@ docker run \
   --rm \
   --network host \
   --env SERVER_PORT=8081 \
+  --env SPRING_KAFKA_CONSUMER_TOPIC="quickstart-events" \
   --env SPRING_KAFKA_CONSUMER_CLIENT_ID="events-consumer-1" \
   --env SPRING_KAFKA_CONSUMER_GROUP_ID="events" \
   --env SPRING_KAFKA_BOOTSTRAP_SERVERS="localhost:9092" \
@@ -75,6 +76,7 @@ docker run \
   --rm \
   --network host \
   --env SERVER_PORT=8082 \
+  --env SPRING_KAFKA_CONSUMER_TOPIC="quickstart-events" \
   --env SPRING_KAFKA_CONSUMER_CLIENT_ID="events-consumer-2" \
   --env SPRING_KAFKA_CONSUMER_GROUP_ID="events" \
   --env SPRING_KAFKA_BOOTSTRAP_SERVERS="localhost:9092" \
@@ -84,7 +86,8 @@ docker run \
   --rm \
   --network host \
   --env SERVER_PORT=8083 \
-    --env SPRING_KAFKA_CONSUMER_CLIENT_ID="orders-consumer-1" \
+  --env SPRING_KAFKA_CONSUMER_TOPIC="quickstart-events" \
+  --env SPRING_KAFKA_CONSUMER_CLIENT_ID="orders-consumer-1" \
   --env SPRING_KAFKA_CONSUMER_GROUP_ID="orders" \
   --env SPRING_KAFKA_BOOTSTRAP_SERVERS="localhost:9092" \
   wasp-kafka-consumer:latest

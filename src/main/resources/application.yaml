@@ -6,9 +6,10 @@ spring:
     bootstrap-servers: "${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}"
 
     consumer:
+      topic: "${SPRING_KAFKA_CONSUMER_TOPIC:quickstart-events}"
       client-id: "${SPRING_KAFKA_CONSUMER_CLIENT_ID:xpto.client}"
       group-id: "${SPRING_KAFKA_CONSUMER_GROUP_ID:xpto.group}"
-      auto-offset-reset: latest
+      auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
