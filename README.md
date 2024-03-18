@@ -1,8 +1,24 @@
 # spring-integration-kafka
 
-## Apache Kafka Quickstart 
+## Apache Kafka Quickstart
 
 https://kafka.apache.org/quickstart
+
+## Downloads
+
+https://kafka.apache.org/downloads
+
+```bash
+wget https://downloads.apache.org/kafka/3.7.0/kafka_2.13-3.7.0.tgz
+tar -xvzf kafka_2.13-3.7.0.tgz
+cd kafka_2.13-3.7.0/bin
+export KAFKA_BIN_PATH=$(pwd)
+
+# Configure this on your .bashrc or .zshrc with the real KAFKA_BIN_PATH value
+export PATH={$PATH}:${KAFKA_BIN_PATH}
+```
+
+## Commands
 
 ```bash
 docker run \
