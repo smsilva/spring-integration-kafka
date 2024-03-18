@@ -12,7 +12,7 @@ import static org.springframework.integration.kafka.inbound.KafkaMessageDrivenCh
 @Configuration
 public class KafkaIntegrationConfig {
 
-    @Bean
+    @Bean(Channels.EVENTS_INPUT)
     public SubscribableChannel kafkaInput() {
         return new PublishSubscribeChannel();
     }
@@ -22,7 +22,7 @@ public class KafkaIntegrationConfig {
             KafkaMessageListenerContainer<String, String> container) {
         KafkaMessageDrivenChannelAdapter<String, String> adapter =
                 new KafkaMessageDrivenChannelAdapter<>(container, record);
-        adapter.setOutputChannel(kafkaInput());
+        adapter.setOutputChannelName(Channels.EVENTS_INPUT);
         return adapter;
     }
 

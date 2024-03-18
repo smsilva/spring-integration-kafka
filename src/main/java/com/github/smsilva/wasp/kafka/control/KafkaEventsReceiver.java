@@ -1,5 +1,6 @@
 package com.github.smsilva.wasp.kafka.control;
 
+import com.github.smsilva.wasp.kafka.config.Channels;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.integration.annotation.ServiceActivator;
@@ -11,7 +12,7 @@ public class KafkaEventsReceiver {
 
     private static final Logger log = LoggerFactory.getLogger(KafkaEventsReceiver.class);
 
-    @ServiceActivator(inputChannel = "kafkaInput")
+    @ServiceActivator(inputChannel = Channels.EVENTS_INPUT)
     public void exampleHandler(Message<?> message) {
         log.info("Received: {}", message);
     }
