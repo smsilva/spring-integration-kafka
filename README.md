@@ -102,6 +102,8 @@ kafka-consumer-groups.sh \
   --offsets
 ```
 
+## Outbound Events
+
 ```bash
 kafka-topics.sh \
   --bootstrap-server localhost:9092 \
@@ -122,4 +124,30 @@ kafka-console-producer.sh \
   --bootstrap-server localhost:9092 \
   --topic "events-outbound" \
   --batch-size 1
+```
+
+## Data Inbound Events
+
+```bash
+kafka-topics.sh \
+  --bootstrap-server localhost:9092 \
+  --create \
+  --topic "events-inbound" \
+  --partitions 2
+```
+
+```bash
+kafka-console-consumer.sh \
+  --bootstrap-server localhost:9092 \
+  --topic "events-inbound" \
+  --from-beginning
+```
+
+```bash
+kafka-console-producer.sh \
+  --bootstrap-server localhost:9092 \
+  --topic "events-inbound" \
+  --batch-size 1
+  
+{"id":"3521db30-2873-48cc-909f-38c270e23975","name":"Simple name for ingestion #1"}
 ```
