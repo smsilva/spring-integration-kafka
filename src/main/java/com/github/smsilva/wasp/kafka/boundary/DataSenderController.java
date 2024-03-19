@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/events")
-public class EventSenderController {
+public class DataSenderController {
 
-    private static final Logger log = org.slf4j.LoggerFactory.getLogger(EventSenderController.class);
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(DataSenderController.class);
 
     private final MessageHandler kafkaProducerHandler;
 
-    public EventSenderController(MessageHandler kafkaProducerHandler) {
+    public DataSenderController(MessageHandler kafkaProducerHandler) {
         this.kafkaProducerHandler = kafkaProducerHandler;
     }
 

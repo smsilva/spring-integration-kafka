@@ -8,14 +8,14 @@ import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.listener.KafkaMessageListenerContainer;
 
 @Configuration
-public class KafkaConfig {
+public class KafkaMessageListenerContainerConfig {
 
     @Bean
     public KafkaMessageListenerContainer<String, String> kafkaMessageListenerContainer(
             ConsumerFactory<String, String> consumerFactory,
             @Value("${spring.kafka.consumer.topic}") String topic,
             @Value("${spring.kafka.consumer.client-id}") String clientId,
-            @Value("${spring.kafka.consumer.group-id}") String groupId) throws Exception {
+            @Value("${spring.kafka.consumer.group-id}") String groupId) {
         ContainerProperties properties = new ContainerProperties(topic);
         properties.setAckMode(ContainerProperties.AckMode.RECORD);
         properties.setClientId(clientId);
