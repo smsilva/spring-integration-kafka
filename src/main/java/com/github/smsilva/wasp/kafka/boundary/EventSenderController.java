@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.UUID;
+import java.util.Random;
 
 @RestController
 @RequestMapping("/events")
@@ -25,12 +25,12 @@ public class EventSenderController {
 
     @PostMapping("/send")
     public ResponseEntity<?> sendEvent() {
-        log.info("Sending event");
-
+        int randomId = new Random().nextInt(1000);
         Data data = new Data();
-        data.setId(UUID.randomUUID().toString());
-        data.setName("Simple name");
+        data.setId(String.valueOf(randomId));
+        data.setName("Simple name #" + randomId);
 
+        log.info("event.id: {} event.name: {}", data.getId(), data.getName());
         kafkaProducerHandler.handleMessage(new GenericMessage<Data>(data));
         return ResponseEntity.ok().build();
     }

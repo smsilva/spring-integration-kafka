@@ -1,10 +1,6 @@
 # spring-integration-kafka
 
-## Apache Kafka Quickstart
-
-https://kafka.apache.org/quickstart
-
-## Downloads
+## Download and Setup Apache Kafka scripts
 
 https://kafka.apache.org/downloads
 
@@ -17,6 +13,10 @@ export KAFKA_BIN_PATH=$(pwd)
 # Configure this on your .bashrc or .zshrc with the real KAFKA_BIN_PATH value
 export PATH={$PATH}:${KAFKA_BIN_PATH}
 ```
+
+## Apache Kafka Quickstart
+
+https://kafka.apache.org/quickstart
 
 ## Commands
 
@@ -34,7 +34,13 @@ docker run \
 kafka-topics.sh \
   --bootstrap-server localhost:9092 \
   --create \
-  --topic "quickstart-events" \
+  --topic "events-inbound" \
+  --partitions 2
+
+kafka-topics.sh \
+  --bootstrap-server localhost:9092 \
+  --create \
+  --topic "events-outbound" \
   --partitions 2
 ```
 
@@ -42,20 +48,28 @@ kafka-topics.sh \
 kafka-topics.sh \
   --bootstrap-server localhost:9092 \
   --describe \
-  --topic "quickstart-events"
+  --topic "events-inbound,events-outbound"
 ```
 
 ```bash
 kafka-console-producer.sh \
   --bootstrap-server localhost:9092 \
-  --topic "quickstart-events" \
+  --topic "events-inbound" \
   --batch-size 1
+```
+
+```bash
+# Payload samples: send one by one
+{"id":"1","name":"Simple name for ingestion #1"}
+{"id":"2","name":"Simple name for ingestion #2"}
+{"id":"3","name":"Simple name for ingestion #3"}
 ```
 
 ```bash
 kafka-console-consumer.sh \
   --bootstrap-server localhost:9092 \
-  --topic "quickstart-events" \
+  --topic "events-inbound" \
+  --group "events" \
   --from-beginning
 ```
 
@@ -66,7 +80,7 @@ docker run \
   --rm \
   --network host \
   --env SERVER_PORT=8081 \
-  --env SPRING_KAFKA_CONSUMER_TOPIC="quickstart-events" \
+  --env SPRING_KAFKA_CONSUMER_TOPIC="events-inbound" \
   --env SPRING_KAFKA_CONSUMER_CLIENT_ID="events-consumer-1" \
   --env SPRING_KAFKA_CONSUMER_GROUP_ID="events" \
   --env SPRING_KAFKA_BOOTSTRAP_SERVERS="localhost:9092" \
@@ -76,19 +90,9 @@ docker run \
   --rm \
   --network host \
   --env SERVER_PORT=8082 \
-  --env SPRING_KAFKA_CONSUMER_TOPIC="quickstart-events" \
+  --env SPRING_KAFKA_CONSUMER_TOPIC="events-inbound" \
   --env SPRING_KAFKA_CONSUMER_CLIENT_ID="events-consumer-2" \
   --env SPRING_KAFKA_CONSUMER_GROUP_ID="events" \
-  --env SPRING_KAFKA_BOOTSTRAP_SERVERS="localhost:9092" \
-  wasp-kafka-consumer:latest
-  
-docker run \
-  --rm \
-  --network host \
-  --env SERVER_PORT=8083 \
-  --env SPRING_KAFKA_CONSUMER_TOPIC="quickstart-events" \
-  --env SPRING_KAFKA_CONSUMER_CLIENT_ID="orders-consumer-1" \
-  --env SPRING_KAFKA_CONSUMER_GROUP_ID="orders" \
   --env SPRING_KAFKA_BOOTSTRAP_SERVERS="localhost:9092" \
   wasp-kafka-consumer:latest
 ```
@@ -97,22 +101,13 @@ docker run \
 kafka-consumer-groups.sh \
   --bootstrap-server localhost:9092 \
   --describe \
-  --group events \
-  --group orders \
+  --group "events" \
   --offsets
 ```
 
 ## Outbound Events
 
 ```bash
-kafka-topics.sh \
-  --bootstrap-server localhost:9092 \
-  --create \
-  --topic "events-outbound" \
-  --partitions 2
-```
-
-```bash
 kafka-console-consumer.sh \
   --bootstrap-server localhost:9092 \
   --topic "events-outbound" \
@@ -120,34 +115,12 @@ kafka-console-consumer.sh \
 ```
 
 ```bash
-kafka-console-producer.sh \
-  --bootstrap-server localhost:9092 \
-  --topic "events-outbound" \
-  --batch-size 1
-```
-
-## Data Inbound Events
-
-```bash
-kafka-topics.sh \
-  --bootstrap-server localhost:9092 \
-  --create \
-  --topic "events-inbound" \
-  --partitions 2
+mvn spring-boot:run
 ```
 
 ```bash
-kafka-console-consumer.sh \
-  --bootstrap-server localhost:9092 \
-  --topic "events-inbound" \
-  --from-beginning
-```
-
-```bash
-kafka-console-producer.sh \
-  --bootstrap-server localhost:9092 \
-  --topic "events-inbound" \
-  --batch-size 1
-  
-{"id":"3521db30-2873-48cc-909f-38c270e23975","name":"Simple name for ingestion #1"}
+curl \
+  --include \
+  --request POST \
+  --url localhost:8080/events/send
 ```
