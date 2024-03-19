@@ -120,7 +120,6 @@ mvn spring-boot:run
 
 ```bash
 curl \
-  --include \
   --request POST \
   --url localhost:8080/events/send
 ```
