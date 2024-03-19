@@ -19,7 +19,7 @@ spring:
       properties:
         spring.json.value.default.type: com.github.smsilva.wasp.kafka.entity.Data
         spring.json.type.mapping: "data:com.github.smsilva.wasp.kafka.entity.Data"
-        spring.json.trusted.packages: "*"
+        spring.json.trusted.packages: "com.github.smsilva.*"
         spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
         spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
         spring.deserializer.value.function: com.github.smsilva.wasp.kafka.exceptions.FailedDataProvider
