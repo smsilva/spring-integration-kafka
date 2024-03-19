@@ -1,6 +1,7 @@
 package com.github.smsilva.wasp.kafka.config;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,12 +18,6 @@ import java.util.Map;
 @Configuration
 public class KafkaIntegrationOutputConfig {
 
-    private final KafkaAppProperties properties;
-
-    public KafkaIntegrationOutputConfig(KafkaAppProperties properties) {
-        this.properties = properties;
-    }
-
     @Bean
     public ProducerFactory<?, ?> kafkaProducerFactory(KafkaProperties properties) {
         Map<String, Object> producerProperties = properties.buildProducerProperties(null);
@@ -32,11 +27,14 @@ public class KafkaIntegrationOutputConfig {
 
     @Bean
     @ServiceActivator(inputChannel = Channels.EVENTS_OUTPUT)
-    public MessageHandler kafkaProducerHandler(KafkaTemplate<String, String> kafkaTemplate) {
+    public MessageHandler kafkaProducerHandler(
+            KafkaTemplate<String, String> kafkaTemplate,
+            @Value("${spring.kafka.producer.topic}") String topic,
+            @Value("${spring.kafka.producer.message-key}") String messageKey) {
         KafkaProducerMessageHandler<String, String> handler =
                 new KafkaProducerMessageHandler<>(kafkaTemplate);
-        handler.setTopicExpression(new LiteralExpression(this.properties.getTopic()));
-        handler.setMessageKeyExpression(new LiteralExpression(this.properties.getMessageKey()));
+        handler.setTopicExpression(new LiteralExpression(topic));
+        handler.setMessageKeyExpression(new LiteralExpression(messageKey));
         return handler;
     }
 
