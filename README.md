@@ -124,3 +124,13 @@ curl \
   --request POST \
   --url localhost:8080/events/send
 ```
+
+```bash
+kafka-consumer-groups.sh \
+  --bootstrap-server localhost:9092 \
+  --execute \
+  --reset-offsets \
+  --topic "events-outbound" \
+  --group "events" \
+  --to-latest
+```

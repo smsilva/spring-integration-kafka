@@ -16,7 +16,7 @@ import org.springframework.messaging.MessageHandler;
 import java.util.Map;
 
 @Configuration
-public class KafkaIntegrationOutputConfig {
+public class KafkaIntegrationProducerConfig {
 
     @Bean
     public ProducerFactory<?, ?> kafkaProducerFactory(KafkaProperties properties) {
