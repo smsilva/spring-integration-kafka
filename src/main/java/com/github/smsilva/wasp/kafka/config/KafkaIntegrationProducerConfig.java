@@ -2,6 +2,7 @@ package com.github.smsilva.wasp.kafka.config;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,10 +17,11 @@ import org.springframework.messaging.MessageHandler;
 import java.util.Map;
 
 @Configuration
+@ConditionalOnProperty(prefix = "spring.kafka", name = "enabled")
 public class KafkaIntegrationProducerConfig {
 
     @Bean
-    public ProducerFactory<?, ?> kafkaProducerFactory(KafkaProperties properties) {
+    public ProducerFactory<Object, Object> kafkaProducerFactory(KafkaProperties properties) {
         Map<String, Object> producerProperties = properties.buildProducerProperties(null);
         producerProperties.put(ProducerConfig.LINGER_MS_CONFIG, 1);
         return new DefaultKafkaProducerFactory<>(producerProperties);
