@@ -133,3 +133,25 @@ kafka-consumer-groups.sh \
   --group "events" \
   --to-latest
 ```
+
+# Confluent
+
+## Setup
+
+```bash
+export CONFLUENT_API_KEY=""
+export CONFLUENT_API_SECRET=""
+export CONFLUENT_BOOTSTRAP_SERVER=""
+export CONFLUENT_BASIC_TOKEN="Basic $(echo -n ${CONFLUENT_API_KEY?}:${CONFLUENT_API_SECRET?} | base64 | tr -d "\n")"
+```
+
+## Create a Topic
+
+```bash
+curl \
+  --request POST \
+  --header "Content-Type: application/json" \
+  --header "Authorization: ${CONFLUENT_BASIC_TOKEN?}" \
+  --url https://${CONFLUENT_SERVER?}:443/kafka/v3/clusters/lkc-pw9x7m/topics \
+  --data '{"topic_name":"events-inbound"}'
+```
