@@ -12,9 +12,9 @@ import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.stereotype.Component;
 
 @Component
-public class KafkaEventsReceiver {
+public class KafkaConsumer {
 
-    private static final Logger log = LoggerFactory.getLogger(KafkaEventsReceiver.class);
+    private static final Logger log = LoggerFactory.getLogger(KafkaConsumer.class);
 
     @ServiceActivator(inputChannel = Channels.EVENTS_INPUT)
     public void handle(Message<Data> message, @Headers KafkaMessageHeaders headers) {

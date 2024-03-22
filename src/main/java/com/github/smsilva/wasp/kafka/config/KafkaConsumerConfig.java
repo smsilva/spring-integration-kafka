@@ -15,7 +15,7 @@ import static org.springframework.integration.kafka.inbound.KafkaMessageDrivenCh
 
 @Configuration
 @ConditionalOnProperty(prefix = "spring.kafka", name = "enabled")
-public class KafkaIntegrationConsumerConfig {
+public class KafkaConsumerConfig {
 
     @Bean
     public KafkaMessageListenerContainer<String, String> kafkaMessageListenerContainer(

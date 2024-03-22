@@ -18,7 +18,7 @@ import java.util.Map;
 
 @Configuration
 @ConditionalOnProperty(prefix = "spring.kafka", name = "enabled")
-public class KafkaIntegrationProducerConfig {
+public class KafkaProducerConfig {
 
     @Bean
     public ProducerFactory<Object, Object> kafkaProducerFactory(KafkaProperties properties) {
