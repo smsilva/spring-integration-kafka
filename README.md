@@ -75,7 +75,7 @@ kafka-console-producer.sh \
 kafka-console-consumer.sh \
   --bootstrap-server localhost:9092 \
   --topic "events-inbound" \
-  --group "events" \
+  --group "console" \
   --from-beginning
 ```
 
@@ -170,4 +170,74 @@ curl \
   --header "Authorization: ${CONFLUENT_BASIC_TOKEN?}" \
   --url https://${CONFLUENT_SERVER?}:443/kafka/v3/clusters/lkc-pw9x7m/topics \
   --data '{"topic_name":"events-inbound"}'
+```
+
+## File Connector
+
+### Create a Topic
+
+```bash
+kafka-topics.sh \
+  --bootstrap-server localhost:9092 \
+  --create \
+  --topic "events-from-file" \
+  --partitions 1
+```
+
+### Start a Consumer
+
+```bash
+kafka-console-consumer.sh \
+  --bootstrap-server localhost:9092 \
+  --topic "events-from-file" \
+  --group "console" \
+  --from-beginning
+```
+
+### Create Event source file
+
+```bash
+mkdir -p /tmp/kafka/input
+
+cat <<EOF > /tmp/kafka/input/events.source
+{"id":"100100","name":"Simple name for ingestion #100100"}
+EOF
+
+cat /tmp/kafka/input/events.source
+```
+
+### Start the File Connector
+
+```bash
+connect-standalone.sh src/main/resources/kafka/connector/connect-standalone.properties src/main/resources/kafka/connector/connect-file-source.properties
+```
+
+### Produce events
+
+```bash
+for SEQUENCE in {100101..100110}; do
+  export EVENT_ID=${SEQUENCE?}
+  export EVENT_NAME="Simple name for ingestion #${EVENT_ID?}"
+  envsubst < ./src/main/resources/kafka/input/event.json \
+    | tee -a /tmp/kafka/input/events.source
+  sleep 0
+done
+```
+
+### Cleanup
+
+#### Reset Connector offset
+
+```bash
+# Check offset.storage.file.filename property on src/main/resources/kafka/connector/connect-standalone.properties
+rm /tmp/kafka/connect.offsets
+```
+
+#### Delete the Topic
+
+```bash
+kafka-topics.sh \
+  --bootstrap-server localhost:9092 \
+  --delete \
+  --topic "events-from-file"
 ```
