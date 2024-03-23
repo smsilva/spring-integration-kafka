@@ -35,13 +35,13 @@ kafka-topics.sh \
   --bootstrap-server localhost:9092 \
   --create \
   --topic "events-inbound" \
-  --partitions 2
+  --partitions 3
 
 kafka-topics.sh \
   --bootstrap-server localhost:9092 \
   --create \
   --topic "events-outbound" \
-  --partitions 2
+  --partitions 3
 ```
 
 ```bash
@@ -63,6 +63,12 @@ kafka-console-producer.sh \
 {"id":"1","name":"Simple name for ingestion #1"}
 {"id":"2","name":"Simple name for ingestion #2"}
 {"id":"3","name":"Simple name for ingestion #3"}
+{"id":"4","name":"Simple name for ingestion #4"}
+{"id":"5","name":"Simple name for ingestion #5"}
+{"id":"6","name":"Simple name for ingestion #6"}
+{"id":"7","name":"Simple name for ingestion #7"}
+{"id":"8","name":"Simple name for ingestion #8"}
+{"id":"9","name":"Simple name for ingestion #9"}
 ```
 
 ```bash
@@ -131,9 +137,17 @@ kafka-consumer-groups.sh \
   --bootstrap-server localhost:9092 \
   --execute \
   --reset-offsets \
-  --topic "events-outbound" \
-  --group "events" \
+  --topic "events-inbound" \
+  --group "consumers" \
   --to-latest
+  
+kafka-consumer-groups.sh \
+  --bootstrap-server localhost:9092 \
+  --execute \
+  --reset-offsets \
+  --to-offset 6 \
+  --topic "events-inbound" \
+  --group "consumers"
 ```
 
 # Confluent

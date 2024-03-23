@@ -15,8 +15,8 @@ spring:
 
     consumer:
       topic: "${SPRING_KAFKA_CONSUMER_TOPIC:events-inbound}"
-      client-id: "${SPRING_KAFKA_CONSUMER_CLIENT_ID:xpto.client}"
-      group-id: "${SPRING_KAFKA_CONSUMER_GROUP_ID:events}"
+      client-id: "${SPRING_KAFKA_CONSUMER_CLIENT_ID:application-consumer}"
+      group-id: "${SPRING_KAFKA_CONSUMER_GROUP_ID:consumers}"
       auto-offset-reset: "${SPRING_KAFKA_CONSUMER_AUTO_OFFSET_RESET:earliest}"
       key-deserializer: com.github.smsilva.wasp.kafka.exceptions.ErrorHandlingDeserializerData
       value-deserializer: com.github.smsilva.wasp.kafka.exceptions.ErrorHandlingDeserializerData

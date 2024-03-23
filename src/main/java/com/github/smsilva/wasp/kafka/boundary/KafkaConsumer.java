@@ -11,15 +11,23 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.stereotype.Component;
 
+import java.math.BigInteger;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
 @Component
 public class KafkaConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(KafkaConsumer.class);
 
+    private final AtomicInteger counter = new AtomicInteger(0);
+
     @ServiceActivator(inputChannel = Channels.EVENTS_INPUT)
-    public void handle(Message<Data> message, @Headers KafkaMessageHeaders headers) {
+    public void handle(Message<Data> message, @Headers KafkaMessageHeaders headers) throws Exception {
+        int invocations = counter.addAndGet(1);
+
         Data payload = message.getPayload();
-        log.info("Message: {}", message);
+        log.info("Message[{}]: {}", invocations,  message);
         log.info("Headers: {}", headers);
         log.info("Payload: {}", message.getPayload());
         log.info("  data.id: {}", message.getPayload().getId());
@@ -30,6 +38,12 @@ public class KafkaConsumer {
             log.error("  topic: {}", badData.getFailedDeserializationInfo().getTopic());
             log.error("  exception.message: {}", badData.getFailedDeserializationInfo().getException().getMessage());
         }
+
+        log.info("Sleeping for 30 seconds");
+
+        Thread.sleep(TimeUnit.SECONDS.toMillis(30));
+
+        log.info("Done sleeping");
     }
 
 }
