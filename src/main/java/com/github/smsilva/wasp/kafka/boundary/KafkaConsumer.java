@@ -38,12 +38,6 @@ public class KafkaConsumer {
             log.error("  topic: {}", badData.getFailedDeserializationInfo().getTopic());
             log.error("  exception.message: {}", badData.getFailedDeserializationInfo().getException().getMessage());
         }
-
-        log.info("Sleeping for 30 seconds");
-
-        Thread.sleep(TimeUnit.SECONDS.toMillis(30));
-
-        log.info("Done sleeping");
     }
 
 }
