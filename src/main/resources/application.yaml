@@ -1,11 +1,10 @@
-spring:
-  logging:
-    level:
-      org:
-        springframework:
-          kafka: INFO
-          integration: INFO
+logging:
+  level:
+    org.springframework:
+      kafka: INFO
+      integration: INFO
 
+spring:
   application:
     name: spring-integration-kafka
 
