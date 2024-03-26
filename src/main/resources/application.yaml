@@ -42,3 +42,16 @@ spring:
         spring.json.value.default.type: com.github.smsilva.wasp.kafka.entity.Data
         spring.json.type.mapping: "data:com.github.smsilva.wasp.kafka.entity.Data"
         spring.json.trusted.packages: "com.github.smsilva.*"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
