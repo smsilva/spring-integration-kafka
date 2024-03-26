@@ -38,6 +38,10 @@ public class KafkaConsumer {
             log.error("  topic: {}", badData.getFailedDeserializationInfo().getTopic());
             log.error("  exception.message: {}", badData.getFailedDeserializationInfo().getException().getMessage());
         }
+
+        log.info("Simulating slow processing...");
+        TimeUnit.SECONDS.sleep(30);
+        log.info("Processing done.");
     }
 
 }

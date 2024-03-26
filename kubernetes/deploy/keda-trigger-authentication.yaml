@@ -1,0 +1,14 @@
+---
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: confluent-trigger-authentication
+spec:
+  secretTargetRef:
+    - parameter: username
+      key: SPRING_KAFKA_USERNAME
+      name: confluent-cloud-credentials-sasl
+
+    - parameter: password
+      key: SPRING_KAFKA_PASSWORD
+      name: confluent-cloud-credentials-sasl

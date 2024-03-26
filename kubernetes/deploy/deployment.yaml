@@ -1,0 +1,56 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wasp-kafka-demo
+  labels:
+    app: wasp-kafka-demo
+spec:
+  replicas: 0
+
+  revisionHistoryLimit: 3
+
+  selector:
+    matchLabels:
+      app: wasp-kafka-demo
+
+  template:
+    metadata:
+      labels:
+        app: wasp-kafka-demo
+
+    spec:
+      containers:
+        - name: wasp-kafka-demo
+          image: wasp-kafka-demo:0.0.1
+          imagePullPolicy: Never
+
+          envFrom:
+            - secretRef:
+                name: confluent-cloud-credentials-sasl
+
+          ports:
+            - containerPort: 8080
+              name: http
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "500m"
+
+            limits:
+              memory: "5Gi"
+              cpu: "3"
+
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5

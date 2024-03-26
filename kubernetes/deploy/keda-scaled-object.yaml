@@ -1,0 +1,29 @@
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: wasp-kafka-demo-confluent
+spec:
+  scaleTargetRef:
+    name: wasp-kafka-demo
+
+  pollingInterval: 5
+  minReplicaCount: 0
+  maxReplicaCount: 3
+
+  triggers:
+    - type: kafka
+      metadata:
+        bootstrapServers: pkc-56d1g.eastus.azure.confluent.cloud:9092
+        consumerGroup: consumers
+        topic: events-inbound
+        tls: enable
+        sasl: plaintext
+        offsetResetPolicy: latest
+        allowIdleConsumers: "false"
+        lagThreshold: "5"
+        activationLagThreshold: "3"
+        limitToPartitionsWithLag: "true"
+        scaleToZeroOnInvalidOffset: "true"
+      authenticationRef:
+        name: confluent-trigger-authentication
