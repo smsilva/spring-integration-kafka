@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.expression.common.LiteralExpression;
-import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.kafka.outbound.KafkaProducerMessageHandler;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -28,7 +27,6 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    @ServiceActivator(inputChannel = Channels.EVENTS_OUTPUT)
     public MessageHandler kafkaProducerHandler(
             KafkaTemplate<String, String> kafkaTemplate,
             @Value("${spring.kafka.producer.topic}") String topic,

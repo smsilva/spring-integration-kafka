@@ -27,7 +27,8 @@ docker run \
   --name kafka \
   --hostname kafka \
   --network bridge \
-  --publish 9092:9092 apache/kafka:3.7.0
+  --publish 9092:9092 \
+  apache/kafka:3.7.0
 ```
 
 ```bash

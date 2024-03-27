@@ -1,0 +1,25 @@
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: wasp-kafka-demo-in-cluster
+spec:
+  scaleTargetRef:
+    name: wasp-kafka-demo
+
+  pollingInterval: 5
+  minReplicaCount: 1
+  maxReplicaCount: 3
+
+  triggers:
+    - type: kafka
+      metadata:
+        bootstrapServers: kafka.kafka.svc:9094
+        consumerGroup: consumers
+        topic: events-inbound
+        offsetResetPolicy: latest
+        allowIdleConsumers: "false"
+        lagThreshold: "5"
+        activationLagThreshold: "3"
+        limitToPartitionsWithLag: "true"
+        scaleToZeroOnInvalidOffset: "true"
