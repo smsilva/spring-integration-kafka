@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: wasp-kafka-demo
-          image: wasp-kafka-demo:0.0.2
+          image: wasp-kafka-demo:0.0.3
           imagePullPolicy: Never
 
           envFrom:
@@ -30,11 +30,12 @@ spec:
                 name: wasp-kafka-demo-properties
 
             - secretRef:
-                name: confluent-cloud-credentials-sasl
+                name: in-cluster-kafka-credentials # confluent-cloud-credentials-sasl
 
           ports:
             - containerPort: 8080
               name: http
+
           resources:
             requests:
               memory: "64Mi"

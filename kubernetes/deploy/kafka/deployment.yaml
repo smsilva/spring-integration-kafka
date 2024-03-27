@@ -1,0 +1,47 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka
+  namespace: kafka
+  labels:
+    app: kakfa
+spec:
+  replicas: 1
+
+  revisionHistoryLimit: 3
+
+  selector:
+    matchLabels:
+      app: kakfa
+
+  template:
+    metadata:
+      labels:
+        app: kakfa
+
+    spec:
+      containers:
+        - name: server
+          image: apache/kafka:3.7.0
+          imagePullPolicy: IfNotPresent
+
+          envFrom:
+            - configMapRef:
+                name: kafka-properties
+
+          ports:
+            - containerPort: 9092
+              name: internal
+
+            - containerPort: 9094
+              name: external
+
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "500m"
+
+            limits:
+              memory: "5Gi"
+              cpu: "3"

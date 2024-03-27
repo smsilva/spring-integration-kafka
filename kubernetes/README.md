@@ -10,7 +10,7 @@ k3d cluster create \
 ## Application container build
 
 ```bash
-export IMAGE="wasp-kafka-demo:0.0.2"
+export IMAGE="wasp-kafka-demo:0.0.3"
 
 mvn package && docker build -t ${IMAGE?} .
 

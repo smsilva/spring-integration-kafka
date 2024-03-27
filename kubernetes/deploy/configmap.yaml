@@ -4,5 +4,5 @@ kind: ConfigMap
 metadata:
   name: wasp-kafka-demo-properties
 data:
-  SPRING_PROFILES_ACTIVE: 'default,confluent'
-  SPRING_KAFKA_SIMULATION_SECONDS: '10'
+  SPRING_PROFILES_ACTIVE: 'default'
+  SPRING_KAFKA_SIMULATION_SECONDS: '0'
