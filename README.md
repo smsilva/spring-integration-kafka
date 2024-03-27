@@ -11,14 +11,14 @@ cd kafka_2.13-3.7.0/bin
 export KAFKA_BIN_PATH=$(pwd)
 
 # Configure this on your .bashrc or .zshrc with the real KAFKA_BIN_PATH value
-export PATH={$PATH}:${KAFKA_BIN_PATH}
+export PATH=${PATH}:${KAFKA_BIN_PATH}
 ```
 
 ## Apache Kafka Quickstart
 
 https://kafka.apache.org/quickstart
 
-## Commands
+### Start a Single Node Kafka Cluster using Docker
 
 ```bash
 docker run \
@@ -30,6 +30,8 @@ docker run \
   --publish 9092:9092 \
   apache/kafka:3.7.0
 ```
+
+### Create Topics
 
 ```bash
 kafka-topics.sh \
@@ -45,12 +47,16 @@ kafka-topics.sh \
   --partitions 3
 ```
 
+### Describe Topics
+
 ```bash
 kafka-topics.sh \
   --bootstrap-server localhost:9092 \
   --describe \
   --topic "events-inbound,events-outbound"
 ```
+
+### Console Producer
 
 ```bash
 kafka-console-producer.sh \
@@ -59,18 +65,7 @@ kafka-console-producer.sh \
   --batch-size 1
 ```
 
-```bash
-# Payload samples: send one by one
-{"id":"1","name":"Simple name for ingestion #1"}
-{"id":"2","name":"Simple name for ingestion #2"}
-{"id":"3","name":"Simple name for ingestion #3"}
-{"id":"4","name":"Simple name for ingestion #4"}
-{"id":"5","name":"Simple name for ingestion #5"}
-{"id":"6","name":"Simple name for ingestion #6"}
-{"id":"7","name":"Simple name for ingestion #7"}
-{"id":"8","name":"Simple name for ingestion #8"}
-{"id":"9","name":"Simple name for ingestion #9"}
-```
+### Console Consumer
 
 ```bash
 kafka-console-consumer.sh \
@@ -80,42 +75,60 @@ kafka-console-consumer.sh \
   --from-beginning
 ```
 
+### Spring Boot Kafka Producer and Consumer
+
+#### Build
+
 ```bash
 mvn package && docker build -t wasp-kafka-consumer .
+```
 
+#### Consumer 1
+
+```bash
 docker run \
   --rm \
   --network host \
   --env SERVER_PORT=8081 \
   --env SPRING_KAFKA_CONSUMER_TOPIC="events-inbound" \
-  --env SPRING_KAFKA_CONSUMER_CLIENT_ID="events-consumer-1" \
+  --env SPRING_KAFKA_CONSUMER_CLIENT_ID="events-consumer" \
   --env SPRING_KAFKA_CONSUMER_GROUP_ID="events" \
+  --env SPRING_KAFKA_PRODUCER_TOPIC="events-inbound" \
   --env SPRING_KAFKA_BOOTSTRAP_SERVERS="localhost:9092" \
   wasp-kafka-consumer:latest
-  
+```
+
+#### Consumer 2
+
+```bash
 docker run \
   --rm \
   --network host \
   --env SERVER_PORT=8082 \
   --env SPRING_KAFKA_CONSUMER_TOPIC="events-inbound" \
-  --env SPRING_KAFKA_CONSUMER_CLIENT_ID="events-consumer-2" \
+  --env SPRING_KAFKA_CONSUMER_CLIENT_ID="events-consumer" \
   --env SPRING_KAFKA_CONSUMER_GROUP_ID="events" \
+  --env SPRING_KAFKA_PRODUCER_TOPIC="events-inbound" \
   --env SPRING_KAFKA_BOOTSTRAP_SERVERS="localhost:9092" \
   wasp-kafka-consumer:latest
 ```
+
+#### Producing Messages
 
 ```bash
 for SEQUENCE in {1..20}; do
   curl \
     --silent \
     --request POST \
-    --url localhost:8080/events/send
+    --url localhost:8081/events/send
   
   sleep 0.5
   
   echo " Message #${SEQUENCE} was sent"
 done
 ```
+
+### Describe Consumer Group
 
 ```bash
 kafka-consumer-groups.sh \

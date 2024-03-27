@@ -24,7 +24,7 @@ spring:
         spring.deserializer.value.function: com.github.smsilva.wasp.kafka.exceptions.FailedDeserializationData
 
     producer:
-      topic: "${SPRING_KAFKA_PRODUCER_TOPIC:events-outbound}"
+      topic: "${SPRING_KAFKA_PRODUCER_TOPIC:events-inbound}"
       message-key: "${SPRING_KAFKA_PRODUCER_MESSAGE_KEY:default-key}"
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
