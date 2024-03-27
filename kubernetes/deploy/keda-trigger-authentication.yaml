@@ -6,9 +6,9 @@ metadata:
 spec:
   secretTargetRef:
     - parameter: username
-      key: SPRING_KAFKA_USERNAME
+      key: CONFLUENT_API_KEY
       name: confluent-cloud-credentials-sasl
 
     - parameter: password
-      key: SPRING_KAFKA_PASSWORD
+      key: CONFLUENT_API_SECRET
       name: confluent-cloud-credentials-sasl

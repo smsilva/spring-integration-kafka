@@ -10,7 +10,7 @@ k3d cluster create \
 ## Application container build
 
 ```bash
-export IMAGE="wasp-kafka-demo:0.0.1"
+export IMAGE="wasp-kafka-demo:0.0.2"
 
 mvn package && docker build -t ${IMAGE?} .
 
@@ -48,8 +48,9 @@ metadata:
   name: confluent-cloud-credentials-sasl
 type: Opaque
 stringData:
-  SPRING_KAFKA_USERNAME: "${SPRING_KAFKA_USERNAME?}"
-  SPRING_KAFKA_PASSWORD: "${SPRING_KAFKA_PASSWORD?}"
+  CONFLUENT_API_KEY:          "${CONFLUENT_API_KEY?}"
+  CONFLUENT_API_SECRET:       "${CONFLUENT_API_SECRET?}"
+  CONFLUENT_BOOTSTRAP_SERVER: "${CONFLUENT_BOOTSTRAP_SERVER?}"
 EOF
 ```
 

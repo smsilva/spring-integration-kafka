@@ -22,10 +22,13 @@ spec:
     spec:
       containers:
         - name: wasp-kafka-demo
-          image: wasp-kafka-demo:0.0.1
+          image: wasp-kafka-demo:0.0.2
           imagePullPolicy: Never
 
           envFrom:
+            - configMapRef:
+                name: wasp-kafka-demo-properties
+
             - secretRef:
                 name: confluent-cloud-credentials-sasl
 

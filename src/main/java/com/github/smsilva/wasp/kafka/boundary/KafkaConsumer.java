@@ -5,13 +5,13 @@ import com.github.smsilva.wasp.kafka.entity.Data;
 import com.github.smsilva.wasp.kafka.exceptions.BadData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.kafka.support.converter.KafkaMessageHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.stereotype.Component;
 
-import java.math.BigInteger;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -20,7 +20,12 @@ public class KafkaConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(KafkaConsumer.class);
 
+    private final int simulationSeconds;
     private final AtomicInteger counter = new AtomicInteger(0);
+
+    public KafkaConsumer(@Value("${spring.kafka.simulation.seconds:0}") int simulationSeconds) {
+        this.simulationSeconds = simulationSeconds;
+    }
 
     @ServiceActivator(inputChannel = Channels.EVENTS_INPUT)
     public void handle(Message<Data> message, @Headers KafkaMessageHeaders headers) throws Exception {
@@ -39,9 +44,15 @@ public class KafkaConsumer {
             log.error("  exception.message: {}", badData.getFailedDeserializationInfo().getException().getMessage());
         }
 
-        log.info("Simulating slow processing...");
-        TimeUnit.SECONDS.sleep(30);
-        log.info("Processing done.");
+        simulation();
+    }
+
+    private void simulation() throws InterruptedException {
+        if (this.simulationSeconds > 0) {
+            log.info("Simulating slow processing waiting for {} seconds", this.simulationSeconds);
+            TimeUnit.SECONDS.sleep(simulationSeconds);
+            log.info("Processing done.");
+        }
     }
 
 }

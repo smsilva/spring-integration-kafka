@@ -1,0 +1,8 @@
+spring:
+  kafka:
+    bootstrap-servers: "${CONFLUENT_BOOTSTRAP_SERVER}"
+    properties:
+      security.protocol: SASL_SSL
+      sasl.mechanism: PLAIN
+      sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username='${CONFLUENT_API_KEY}' password='${CONFLUENT_API_SECRET}';
+      session.timeout.ms: 45000
