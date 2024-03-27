@@ -23,13 +23,37 @@ kubectl wait pods \
   --namespace kafka \
   --selector app=kakfa \
   --for condition=Ready \
-  --timeout=360s
+  --timeout=360s && \
+kubectl logs \
+  --namespace kafka \
+  --selector app=kakfa \
+  --follow
 ```
 
 ```bash
-kubectl logs \
-  --namespace kafka \
-  --selector app=kakfa
+kubectl run \
+  -it \
+  --image apache/kafka:3.7.0 \
+  --restart=Never \
+  --rm kafka-client \
+  --namespace default \
+  --command -- bash
+```
+
+```bash
+export PATH=$PATH:/opt/kafka/bin/
+
+kafka-topics.sh \
+  --bootstrap-server kafka.kafka.svc:9094 \
+  --create \
+  --topic "events-inbound" \
+  --partitions 3
+  
+kafka-topics.sh \
+  --bootstrap-server kafka.kafka.svc:9094 \
+  --create \
+  --topic "events-outbound" \
+  --partitions 3
 ```
 
 ## Application container build
@@ -106,7 +130,7 @@ curl --include localhost:8081/actuator/health
 ```
 
 ```bash
-for SEQUENCE in {1..10}; do
+for SEQUENCE in {1..20}; do
   curl \
     --silent \
     --request POST \
@@ -116,14 +140,6 @@ for SEQUENCE in {1..10}; do
   
   echo " Message #${SEQUENCE} was sent"
 done
-```
-
-## Watch for Resources
-
-```bash
-watch -n 3 'kubectl get deploy,pods \
-  --namespace wasp \
-  --output wide'
 ```
 
 ## Confluent Cloud config
