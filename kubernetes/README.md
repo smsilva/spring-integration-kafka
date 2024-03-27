@@ -11,6 +11,9 @@ k3d cluster create \
 
 ## Deploying an Apache Kafka Instance into k3d cluster
 
+
+### Deploy
+
 Environment variables based on this: [docker-compose.yml](https://github.com/apache/kafka/blob/trunk/docker/examples/jvm/single-node/plaintext/docker-compose.yml)
 
 ```bash
@@ -29,6 +32,8 @@ kubectl logs \
   --selector app=kakfa \
   --follow
 ```
+
+### Topics setup
 
 ```bash
 kubectl run \
@@ -56,10 +61,54 @@ kafka-topics.sh \
   --partitions 3
 ```
 
-## Application container build
+```bash
+kafka-topics.sh \
+  --bootstrap-server kafka.kafka.svc:9094 \
+  --describe \
+  --topic "events-inbound,events-outbound"
+```
+
+### Producing and Consuming messages
 
 ```bash
-export IMAGE="wasp-kafka-demo:0.0.1"
+kafka-console-producer.sh \
+  --bootstrap-server kafka.kafka.svc:9094 \
+  --topic "events-inbound" \
+  --batch-size 1
+```
+
+```bash
+kubectl run \
+  -it \
+  --image apache/kafka:3.7.0 \
+  --restart=Never \
+  --rm "kafka-consumer-1" \
+  --namespace default \
+  --command -- bash
+
+kubectl run \
+  -it \
+  --image apache/kafka:3.7.0 \
+  --restart=Never \
+  --rm "kafka-consumer-2" \
+  --namespace default \
+  --command -- bash
+
+export PATH=$PATH:/opt/kafka/bin/
+
+kafka-console-consumer.sh \
+  --bootstrap-server kafka.kafka.svc:9094 \
+  --topic "events-inbound" \
+  --group "console" \
+  --from-beginning
+```
+
+## Application Deployment
+
+### Application container build
+
+```bash
+export IMAGE="wasp-kafka-demo:0.0.2"
 
 mvn package && docker build -t ${IMAGE?} .
 
@@ -69,7 +118,7 @@ k3d image import ${IMAGE?}
 ## Watch for Resources
 
 ```bash
-watch -n 3 'kubectl get cm,secret,deploy,pods,svc,ing \
+watch -n 3 'kubectl get deploy,pods,svc,ing \
   --namespace wasp \
   --output wide'
 ```
@@ -223,28 +272,4 @@ kubectl get --raw "/apis/external.metrics.k8s.io/v1beta1/namespaces/YOUR_NAMESPA
 kubectl -n wasp get scaledobject wasp-kafka-demo-in-cluster -o jsonpath={.status.externalMetricNames}
 
 kubectl get --raw "/apis/external.metrics.k8s.io/v1beta1/namespaces/wasp/s0-kafka-events-inbound?labelSelector=scaledobject.keda.sh%2Fname%3Dwasp-kafka-demo-in-cluster"
-```
-
-## Running a local Prometheus Instance
-
-```bash
-docker run \
-  --name prometheus \
-  --rm \
-  --detach \
-  --network host \
-  --volume $(pwd)/prometheus.yml:/etc/prometheus/prometheus.yml \
-  prom/prometheus:v2.51.0 \
-    --config.file=/etc/prometheus/prometheus.yml
-```
-
-## Running a local Grafana Instance
-
-```bash
-docker run \
-  --name grafana \
-  --rm \
-  --detach \
-  --network host \
-  grafana/grafana:10.3.5-ubuntu
 ```

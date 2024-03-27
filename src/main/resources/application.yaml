@@ -25,7 +25,7 @@ spring:
 
     producer:
       topic: "${SPRING_KAFKA_PRODUCER_TOPIC:events-outbound}"
-      message-key: "${SPRING_KAFKA_PRODUCER_MESSAGE_KEY:events-inbound-key}"
+      message-key: "${SPRING_KAFKA_PRODUCER_MESSAGE_KEY:default-key}"
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
@@ -38,9 +38,11 @@ spring:
 
 logging:
   level:
-    org.springframework:
-      kafka: INFO
-      integration: INFO
+    org:
+      springframework:
+        kafka: INFO
+        integration: INFO
+        web: INFO
 
 management:
   endpoints:

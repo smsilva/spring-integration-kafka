@@ -1,6 +1,7 @@
 package com.github.smsilva.wasp.kafka.config;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.RoundRobinPartitioner;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
@@ -23,6 +24,7 @@ public class KafkaProducerConfig {
     public ProducerFactory<Object, Object> kafkaProducerFactory(KafkaProperties properties) {
         Map<String, Object> producerProperties = properties.buildProducerProperties(null);
         producerProperties.put(ProducerConfig.LINGER_MS_CONFIG, 1);
+        producerProperties.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, RoundRobinPartitioner.class);
         return new DefaultKafkaProducerFactory<>(producerProperties);
     }
 
@@ -31,8 +33,7 @@ public class KafkaProducerConfig {
             KafkaTemplate<String, String> kafkaTemplate,
             @Value("${spring.kafka.producer.topic}") String topic,
             @Value("${spring.kafka.producer.message-key}") String messageKey) {
-        KafkaProducerMessageHandler<String, String> handler =
-                new KafkaProducerMessageHandler<>(kafkaTemplate);
+        KafkaProducerMessageHandler<String, String> handler = new KafkaProducerMessageHandler<>(kafkaTemplate);
         handler.setTopicExpression(new LiteralExpression(topic));
         handler.setMessageKeyExpression(new LiteralExpression(messageKey));
         return handler;

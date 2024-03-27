@@ -55,7 +55,7 @@ kafka-topics.sh \
 ```bash
 kafka-console-producer.sh \
   --bootstrap-server localhost:9092 \
-  --topic "events-inbound" \
+  --topic "events-outbound" \
   --batch-size 1
 ```
 
@@ -75,7 +75,7 @@ kafka-console-producer.sh \
 ```bash
 kafka-console-consumer.sh \
   --bootstrap-server localhost:9092 \
-  --topic "events-inbound" \
+  --topic "events-outbound" \
   --group "console" \
   --from-beginning
 ```
@@ -102,6 +102,19 @@ docker run \
   --env SPRING_KAFKA_CONSUMER_GROUP_ID="events" \
   --env SPRING_KAFKA_BOOTSTRAP_SERVERS="localhost:9092" \
   wasp-kafka-consumer:latest
+```
+
+```bash
+for SEQUENCE in {1..20}; do
+  curl \
+    --silent \
+    --request POST \
+    --url localhost:8080/events/send
+  
+  sleep 0.5
+  
+  echo " Message #${SEQUENCE} was sent"
+done
 ```
 
 ```bash

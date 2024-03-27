@@ -13,10 +13,10 @@ public class KafkaProducerController {
 
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(KafkaProducerController.class);
 
-    private final KafkaProducerService kafkaProducer;
+    private final KafkaProducerService kafkaProducerService;
 
     public KafkaProducerController(KafkaProducerService kafkaProducer) {
-        this.kafkaProducer = kafkaProducer;
+        this.kafkaProducerService = kafkaProducer;
     }
 
     @PostMapping("/send")
@@ -25,7 +25,7 @@ public class KafkaProducerController {
 
         log.info("event.id: {} event.name: {}", data.getId(), data.getName());
 
-        kafkaProducer.send(data);
+        kafkaProducerService.send(data);
 
         return ResponseEntity
                 .ok()
