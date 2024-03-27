@@ -5,5 +5,5 @@ metadata:
   name: wasp-kafka-demo-properties
 data:
   SPRING_PROFILES_ACTIVE: 'default'
-  SPRING_KAFKA_SIMULATION_SECONDS: '2'
+  SPRING_KAFKA_SIMULATION_SECONDS: '5'
   SPRING_KAFKA_PRODUCER_TOPIC: 'events-inbound'
