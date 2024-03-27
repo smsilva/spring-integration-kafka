@@ -1,6 +1,6 @@
 # Local Cluster Example
 
-## Create Cluster
+## Create a k3d cluster
 
 ```bash
 k3d cluster create \
@@ -9,8 +9,7 @@ k3d cluster create \
   --agents 3
 ```
 
-## Deploying an Apache Kafka Instance into k3d cluster
-
+## Single Node Apache Kafka Instance deployment
 
 ### Deploy
 
@@ -34,6 +33,8 @@ kubectl logs \
 ```
 
 ### Topics setup
+
+Split the terminal to make room for consumers first and client after.
 
 ```bash
 kubectl run \
@@ -71,13 +72,6 @@ kafka-topics.sh \
 ### Producing and Consuming messages
 
 ```bash
-kafka-console-producer.sh \
-  --bootstrap-server kafka.kafka.svc:9094 \
-  --topic "events-inbound" \
-  --batch-size 1
-```
-
-```bash
 kubectl run \
   -it \
   --image apache/kafka:3.7.0 \
@@ -85,7 +79,9 @@ kubectl run \
   --rm "kafka-consumer-1" \
   --namespace default \
   --command -- bash
+```
 
+```bash
 kubectl run \
   -it \
   --image apache/kafka:3.7.0 \
@@ -93,7 +89,9 @@ kubectl run \
   --rm "kafka-consumer-2" \
   --namespace default \
   --command -- bash
+```
 
+```bash
 export PATH=$PATH:/opt/kafka/bin/
 
 kafka-console-consumer.sh \
@@ -101,6 +99,13 @@ kafka-console-consumer.sh \
   --topic "events-inbound" \
   --group "console" \
   --from-beginning
+```
+
+```bash
+kafka-console-producer.sh \
+  --bootstrap-server kafka.kafka.svc:9094 \
+  --topic "events-inbound" \
+  --batch-size 1
 ```
 
 ## Application Deployment
@@ -118,7 +123,7 @@ k3d image import ${IMAGE?}
 ## Watch for Resources
 
 ```bash
-watch -n 3 'kubectl get deploy,pods,svc,ing \
+watch -n 3 'kubectl get deploy,pods \
   --namespace wasp \
   --output wide'
 ```
@@ -157,7 +162,7 @@ kubectl apply \
 ```
 
 ```bash
-kubectl scale deployment wasp-kafka-demo --replicas 1
+kubectl scale deployment wasp-kafka-demo --replicas 2
 ```
 
 ```bash
@@ -170,6 +175,10 @@ kubectl logs \
   --namespace wasp \
   --selector app=wasp-kafka-demo \
   --follow 
+```
+
+```bash
+kubectl logs --follow <CONSUMER_1_POD>
 ```
 
 ### Test
