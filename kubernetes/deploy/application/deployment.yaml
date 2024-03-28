@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: wasp-kafka-demo
-          image: wasp-kafka-demo:0.0.2
+          image: wasp-kafka-demo:0.0.1
           imagePullPolicy: Never
 
           envFrom:

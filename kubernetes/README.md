@@ -32,9 +32,11 @@ kubectl logs \
   --follow
 ```
 
-### Topics setup
+### Setup
 
 Split the terminal to make room for consumers first and client after.
+
+### Client
 
 ```bash
 kubectl run \
@@ -45,6 +47,8 @@ kubectl run \
   --namespace default \
   --command -- bash
 ```
+
+### Create Topics
 
 ```bash
 export PATH=$PATH:/opt/kafka/bin/
@@ -62,6 +66,8 @@ kafka-topics.sh \
   --partitions 3
 ```
 
+### Describe Topics
+
 ```bash
 kafka-topics.sh \
   --bootstrap-server kafka.kafka.svc:9094 \
@@ -69,7 +75,7 @@ kafka-topics.sh \
   --topic "events-inbound,events-outbound"
 ```
 
-### Producing and Consuming messages
+### Consumer 1 (POD)
 
 ```bash
 kubectl run \
@@ -81,6 +87,8 @@ kubectl run \
   --command -- bash
 ```
 
+### Consumer 2 (POD)
+
 ```bash
 kubectl run \
   -it \
@@ -91,6 +99,8 @@ kubectl run \
   --command -- bash
 ```
 
+### Start consuming
+
 ```bash
 export PATH=$PATH:/opt/kafka/bin/
 
@@ -100,6 +110,8 @@ kafka-console-consumer.sh \
   --group "console" \
   --from-beginning
 ```
+
+### Producer
 
 ```bash
 kafka-console-producer.sh \
@@ -113,7 +125,7 @@ kafka-console-producer.sh \
 ### Application container build
 
 ```bash
-export IMAGE="wasp-kafka-demo:0.0.2"
+export IMAGE="wasp-kafka-demo:0.0.1"
 
 mvn package && docker build -t ${IMAGE?} .
 
@@ -148,22 +160,30 @@ kubectl config get-contexts
 
 ## Application Deployment
 
-```bash
-kubectl apply \
-  --namespace wasp \
-  --filename ./kubernetes/deploy/ \
-  --dry-run=server
-```
+### Dry-run
 
 ```bash
 kubectl apply \
   --namespace wasp \
-  --filename ./kubernetes/deploy/ 
+  --filename ./kubernetes/deploy/application/ \
+  --dry-run=server
 ```
+
+### Apply resources
+
+```bash
+kubectl apply \
+  --namespace wasp \
+  --filename ./kubernetes/deploy/application/
+```
+
+### Scale up the deployment to 2 replicas
 
 ```bash
 kubectl scale deployment wasp-kafka-demo --replicas 2
 ```
+
+### Wait and logs follow
 
 ```bash
 kubectl wait pods \
@@ -186,6 +206,8 @@ kubectl logs --follow <CONSUMER_1_POD>
 ```bash
 curl --include localhost:8081/actuator/health
 ```
+
+### Produce messages
 
 ```bash
 for SEQUENCE in {1..20}; do
@@ -256,29 +278,29 @@ kubectl apply \
   --filename ./kubernetes/deploy/in-cluster/keda-scaled-object.yaml
 ```
 
-## Producing messages
+### Produce messages
 
 ```bash
-confluent kafka topic produce events-inbound
-
-{"id":"1","name":"Simple name for ingestion #1"}
-{"id":"2","name":"Simple name for ingestion #2"}
-{"id":"3","name":"Simple name for ingestion #3"}
-{"id":"4","name":"Simple name for ingestion #4"}
-{"id":"5","name":"Simple name for ingestion #5"}
-{"id":"6","name":"Simple name for ingestion #6"}
-{"id":"7","name":"Simple name for ingestion #7"}
-{"id":"8","name":"Simple name for ingestion #8"}
-{"id":"9","name":"Simple name for ingestion #9"}
-{"id":"10","name":"Simple name for ingestion #10"}
+for SEQUENCE in {1..20}; do
+  curl \
+    --silent \
+    --request POST \
+    --url localhost:8081/events/send
+  
+  sleep 0.5
+  
+  echo " Message #${SEQUENCE} was sent"
+done
 ```
 
 ## Keda metrics
 
 ```bash
-kubectl get --raw "/apis/external.metrics.k8s.io/v1beta1/namespaces/YOUR_NAMESPACE/YOUR_METRIC_NAME?labelSelector=scaledobject.keda.sh%2Fname%3D{SCALED_OBJECT_NAME}"
+kubectl get scaledobject wasp-kafka-demo-in-cluster \
+  --namespace wasp \
+  --output jsonpath={.status.externalMetricNames}
+```
 
-kubectl -n wasp get scaledobject wasp-kafka-demo-in-cluster -o jsonpath={.status.externalMetricNames}
-
+```bash
 kubectl get --raw "/apis/external.metrics.k8s.io/v1beta1/namespaces/wasp/s0-kafka-events-inbound?labelSelector=scaledobject.keda.sh%2Fname%3Dwasp-kafka-demo-in-cluster"
 ```
