@@ -222,6 +222,30 @@ for SEQUENCE in {1..20}; do
 done
 ```
 
+### Client
+
+```bash
+kubectl run \
+  -it \
+  --image apache/kafka:3.7.0 \
+  --restart=Never \
+  --rm kafka-client \
+  --namespace default \
+  --command -- bash
+```
+
+### Describe "consumers" group
+
+```bash
+export PATH=$PATH:/opt/kafka/bin/
+
+kafka-consumer-groups.sh \
+  --bootstrap-server kafka.kafka.svc:9094 \
+  --describe \
+  --group "consumers" \
+  --offsets
+```
+
 ## Confluent Cloud config
 
 To use Confluent, you must update deployment.yaml file accordingly:
