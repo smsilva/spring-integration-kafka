@@ -1,4 +1,6 @@
-# spring-integration-kafka
+# Spring Integration with Kafka example
+
+![Kafka Producers and Consumers](/images/spring-integration-kafka.png)
 
 ## Download and Setup Apache Kafka scripts
 
