@@ -1,5 +1,11 @@
 # Spring Integration with Kafka example
 
+## Native Image build
+
+```bash
+mvn -Pnative native:compile
+```
+
 ![Kafka Producers and Consumers](/images/spring-integration-kafka.png)
 
 ## Download and Setup Apache Kafka scripts
