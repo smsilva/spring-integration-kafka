@@ -28,11 +28,7 @@ public class KafkaProducerConfig {
         Map<String, Object> producerProperties = properties.buildProducerProperties(null);
         producerProperties.put(ProducerConfig.LINGER_MS_CONFIG, 1);
         producerProperties.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, RoundRobinPartitioner.class);
-
-        StringSerializer keySerializer = new StringSerializer();
-        JsonSerializer<Data> valueSerializer = new JsonSerializer<>();
-
-        return new DefaultKafkaProducerFactory<>(producerProperties, keySerializer, valueSerializer);
+        return new DefaultKafkaProducerFactory<>(producerProperties, new StringSerializer(), new JsonSerializer<>());
     }
 
     @Bean
