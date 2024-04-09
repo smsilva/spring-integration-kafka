@@ -1,7 +1,9 @@
 package com.github.smsilva.wasp.kafka.config;
 
+import com.github.smsilva.wasp.kafka.entity.Data;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.RoundRobinPartitioner;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
@@ -12,6 +14,7 @@ import org.springframework.integration.kafka.outbound.KafkaProducerMessageHandle
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
+import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.messaging.MessageHandler;
 
 import java.util.Map;
@@ -21,19 +24,28 @@ import java.util.Map;
 public class KafkaProducerConfig {
 
     @Bean
-    public ProducerFactory<Object, Object> kafkaProducerFactory(KafkaProperties properties) {
+    public ProducerFactory<String, Data> kafkaProducerFactory(KafkaProperties properties) {
         Map<String, Object> producerProperties = properties.buildProducerProperties(null);
         producerProperties.put(ProducerConfig.LINGER_MS_CONFIG, 1);
         producerProperties.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, RoundRobinPartitioner.class);
-        return new DefaultKafkaProducerFactory<>(producerProperties);
+
+        StringSerializer keySerializer = new StringSerializer();
+        JsonSerializer<Data> valueSerializer = new JsonSerializer<>();
+
+        return new DefaultKafkaProducerFactory<>(producerProperties, keySerializer, valueSerializer);
+    }
+
+    @Bean
+    public KafkaTemplate<String, Data> kafkaTemplate(ProducerFactory<String, Data> producerFactory) {
+        return new KafkaTemplate<>(producerFactory);
     }
 
     @Bean
     public MessageHandler kafkaProducerHandler(
-            KafkaTemplate<String, String> kafkaTemplate,
+            KafkaTemplate<String, Data> kafkaTemplate,
             @Value("${spring.kafka.producer.topic}") String topic,
             @Value("${spring.kafka.producer.message-key}") String messageKey) {
-        KafkaProducerMessageHandler<String, String> handler = new KafkaProducerMessageHandler<>(kafkaTemplate);
+        KafkaProducerMessageHandler<String, Data> handler = new KafkaProducerMessageHandler<>(kafkaTemplate);
         handler.setTopicExpression(new LiteralExpression(topic));
         handler.setMessageKeyExpression(new LiteralExpression(messageKey));
         return handler;
