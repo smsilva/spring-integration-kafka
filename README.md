@@ -13,13 +13,18 @@ mvn -Pnative native:compile
 https://kafka.apache.org/downloads
 
 ```bash
-wget https://downloads.apache.org/kafka/3.7.0/kafka_2.13-3.7.0.tgz
-tar -xvzf kafka_2.13-3.7.0.tgz
-cd kafka_2.13-3.7.0/bin
-export KAFKA_BIN_PATH=$(pwd)
+mkdir --parents ${HOME}/bin
+wget --output-document /tmp/kafka_2.13-3.7.2.tgz https://downloads.apache.org/kafka/3.7.2/kafka_2.13-3.7.2.tgz
+tar -xvzf /tmp/kafka_2.13-3.7.2.tgz --directory ${HOME}/bin
 
-# Configure this on your .bashrc or .zshrc with the real KAFKA_BIN_PATH value
-export PATH=${PATH}:${KAFKA_BIN_PATH}
+cat <<EOF >> ${HOME}/.bashrc
+
+export KAFKA_BIN_PATH="${HOME}/bin/kafka_2.13-3.7.2/bin"
+
+if ! grep --quiet "\${KAFKA_BIN_PATH}" <<< "\${PATH}"; then
+  export PATH="\${KAFKA_BIN_PATH}:\${PATH}"
+fi
+EOF
 ```
 
 ## Apache Kafka Quickstart
