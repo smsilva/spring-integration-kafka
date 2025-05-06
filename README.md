@@ -14,12 +14,12 @@ https://kafka.apache.org/downloads
 
 ```bash
 mkdir --parents ${HOME}/bin
-wget --output-document /tmp/kafka_2.13-3.7.2.tgz https://downloads.apache.org/kafka/3.7.2/kafka_2.13-3.7.2.tgz
-tar -xvzf /tmp/kafka_2.13-3.7.2.tgz --directory ${HOME}/bin
+wget --output-document /tmp/kafka_2.13-4.0.0.tgz https://downloads.apache.org/kafka/4.0.0/kafka_2.13-4.0.0.tgz
+tar -xvzf /tmp/kafka_2.13-4.0.0.tgz --directory ${HOME}/bin
 
 cat <<EOF >> ${HOME}/.bashrc
 
-export KAFKA_BIN_PATH="${HOME}/bin/kafka_2.13-3.7.2/bin"
+export KAFKA_BIN_PATH="${HOME}/bin/kafka_2.13-4.0.0/bin"
 
 if ! grep --quiet "\${KAFKA_BIN_PATH}" <<< "\${PATH}"; then
   export PATH="\${KAFKA_BIN_PATH}:\${PATH}"
@@ -41,7 +41,7 @@ docker run \
   --hostname kafka \
   --network bridge \
   --publish 9092:9092 \
-  apache/kafka:3.7.0
+  apache/kafka:4.0.0
 ```
 
 ### Create Topics
@@ -205,7 +205,7 @@ export AZURE_EVENTHUBS_BOOTSTRAP_SERVER="<EVENT_HUB_NAMESPACE_NAME>.servicebus.w
 export AZURE_EVENTHUBS_USERNAME='$ConnectionString'
 export SPRING_PROFILES_ACTIVE='default,eventhubs'
 export SPRING_KAFKA_CONSUMER_TOPIC='<EVENT_HUB_NAME>'
-export KAFKA_OPTS="-Djava.security.manager=allow"
+export KAFKA_OPTS="-Djava.security.manager=allow" # Before Java 24
 ```
 
 ### Optional
@@ -220,20 +220,20 @@ EOF
 ````
 
 ```bash
-kafka-console-producer.sh \
-  --bootstrap-server ${AZURE_EVENTHUBS_BOOTSTRAP_SERVER} \
-  --producer.config console.properties \
-  --topic "${SPRING_KAFKA_PRODUCER_TOPIC?}" \
-  --batch-size 1
-```
-
-```bash
 kafka-console-consumer.sh \
   --bootstrap-server ${AZURE_EVENTHUBS_BOOTSTRAP_SERVER} \
   --consumer.config console.properties \
   --topic "${SPRING_KAFKA_CONSUMER_TOPIC?}" \
   --group "console" \
   --from-beginning
+```
+
+```bash
+kafka-console-producer.sh \
+  --bootstrap-server ${AZURE_EVENTHUBS_BOOTSTRAP_SERVER} \
+  --producer.config console.properties \
+  --topic "${SPRING_KAFKA_PRODUCER_TOPIC?}" \
+  --batch-size 1
 ```
 
 # Confluent
