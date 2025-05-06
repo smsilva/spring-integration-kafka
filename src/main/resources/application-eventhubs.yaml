@@ -1,0 +1,8 @@
+spring:
+  kafka:
+    bootstrap-servers: "${AZURE_EVENTHUBS_BOOTSTRAP_SERVER}"
+    properties:
+      security.protocol: SASL_SSL
+      sasl.mechanism: PLAIN
+      sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username='${AZURE_EVENTHUBS_USERNAME}' password='${AZURE_EVENTHUBS_CONNECTION_STRING}';
+      session.timeout.ms: 60000
