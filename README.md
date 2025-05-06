@@ -205,6 +205,7 @@ export AZURE_EVENTHUBS_BOOTSTRAP_SERVER="<EVENT_HUB_NAMESPACE_NAME>.servicebus.w
 export AZURE_EVENTHUBS_USERNAME='$ConnectionString'
 export SPRING_PROFILES_ACTIVE='default,eventhubs'
 export SPRING_KAFKA_CONSUMER_TOPIC='<EVENT_HUB_NAME>'
+export KAFKA_OPTS="-Djava.security.manager=allow"
 ```
 
 ### Optional
@@ -219,13 +220,20 @@ EOF
 ````
 
 ```bash
-export KAFKA_OPTS="-Djava.security.manager=allow"
-
 kafka-console-producer.sh \
   --bootstrap-server ${AZURE_EVENTHUBS_BOOTSTRAP_SERVER} \
   --producer.config console.properties \
   --topic "${SPRING_KAFKA_PRODUCER_TOPIC?}" \
   --batch-size 1
+```
+
+```bash
+kafka-console-consumer.sh \
+  --bootstrap-server ${AZURE_EVENTHUBS_BOOTSTRAP_SERVER} \
+  --consumer.config console.properties \
+  --topic "${SPRING_KAFKA_CONSUMER_TOPIC?}" \
+  --group "console" \
+  --from-beginning
 ```
 
 # Confluent
