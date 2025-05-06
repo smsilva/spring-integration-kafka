@@ -161,7 +161,13 @@ kafka-console-consumer.sh \
 ```
 
 ```bash
-mvn spring-boot:run
+mvn spring-boot:run 
+```
+
+### Azure Event Hubs Authentication + Java JDK 23
+
+```bash
+mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Djava.security.manager=allow" 
 ```
 
 ```bash
@@ -188,6 +194,38 @@ kafka-consumer-groups.sh \
   --to-offset 6 \
   --topic "events-inbound" \
   --group "consumers"
+```
+# Azure Event Hubs
+
+## Setup
+
+```bash
+export AZURE_EVENTHUBS_CONNECTION_STRING="Endpoint=sb://<EVENT_HUB_NAMESPACE_NAME>.servicebus.windows.net/;SharedAccessKeyName=manage;SharedAccessKey=<YOUR_SHARED_ACCESS_KEY_VALUE>;EntityPath=<EVENT_HUB_NAME>"
+export AZURE_EVENTHUBS_BOOTSTRAP_SERVER="<EVENT_HUB_NAMESPACE_NAME>.servicebus.windows.net:9093"
+export AZURE_EVENTHUBS_USERNAME='$ConnectionString'
+export SPRING_PROFILES_ACTIVE='default,eventhubs'
+export SPRING_KAFKA_CONSUMER_TOPIC='<EVENT_HUB_NAME>'
+```
+
+### Optional
+
+```bash
+cat <<EOF > console.properties
+security.protocol: SASL_SSL
+sasl.mechanism: PLAIN
+sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username='\$ConnectionString' password='${AZURE_EVENTHUBS_CONNECTION_STRING}';
+session.timeout.ms: 60000
+EOF
+````
+
+```bash
+export KAFKA_OPTS="-Djava.security.manager=allow"
+
+kafka-console-producer.sh \
+  --bootstrap-server ${AZURE_EVENTHUBS_BOOTSTRAP_SERVER} \
+  --producer.config console.properties \
+  --topic "${SPRING_KAFKA_PRODUCER_TOPIC?}" \
+  --batch-size 1
 ```
 
 # Confluent

@@ -1,4 +1,4 @@
-FROM azul/zulu-openjdk-alpine:24-latest
+FROM azul/zulu-openjdk-alpine:23-latest
 
 RUN addgroup -S spring && \
     adduser -S spring -G spring
@@ -9,4 +9,4 @@ ARG JAR_FILE=target/*.jar
 
 COPY ${JAR_FILE} app.jar
 
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+ENTRYPOINT ["java", "-Djava.security.manager=allow", "-jar", "/app.jar"]
