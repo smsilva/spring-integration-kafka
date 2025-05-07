@@ -203,6 +203,7 @@ kafka-consumer-groups.sh \
 export AZURE_EVENTHUBS_CONNECTION_STRING="Endpoint=sb://<EVENT_HUB_NAMESPACE_NAME>.servicebus.windows.net/;SharedAccessKeyName=manage;SharedAccessKey=<YOUR_SHARED_ACCESS_KEY_VALUE>;EntityPath=<EVENT_HUB_NAME>"
 export AZURE_EVENTHUBS_BOOTSTRAP_SERVER="<EVENT_HUB_NAMESPACE_NAME>.servicebus.windows.net:9093"
 export AZURE_EVENTHUBS_USERNAME='$ConnectionString'
+export AZURE_EVENTHUBS_TOPIC="<EVENT_HUB_NAME>"
 export SPRING_PROFILES_ACTIVE='default,eventhubs'
 export SPRING_KAFKA_CONSUMER_TOPIC='<EVENT_HUB_NAME>'
 export KAFKA_OPTS="-Djava.security.manager=allow" # Before Java 24
@@ -223,7 +224,7 @@ EOF
 kafka-console-consumer.sh \
   --bootstrap-server ${AZURE_EVENTHUBS_BOOTSTRAP_SERVER} \
   --consumer.config console.properties \
-  --topic "${SPRING_KAFKA_CONSUMER_TOPIC?}" \
+  --topic "${AZURE_EVENTHUBS_TOPIC?}" \
   --group "console" \
   --from-beginning
 ```
@@ -232,7 +233,7 @@ kafka-console-consumer.sh \
 kafka-console-producer.sh \
   --bootstrap-server ${AZURE_EVENTHUBS_BOOTSTRAP_SERVER} \
   --producer.config console.properties \
-  --topic "${SPRING_KAFKA_PRODUCER_TOPIC?}" \
+  --topic "${AZURE_EVENTHUBS_TOPIC?}" \
   --batch-size 1
 ```
 
