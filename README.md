@@ -13,13 +13,19 @@ mvn -Pnative native:compile
 https://kafka.apache.org/downloads
 
 ```bash
-mkdir --parents ${HOME}/bin
-wget --output-document /tmp/kafka_2.13-4.0.0.tgz https://downloads.apache.org/kafka/4.0.0/kafka_2.13-4.0.0.tgz
-tar -xvzf /tmp/kafka_2.13-4.0.0.tgz --directory ${HOME}/bin
+KAFKA_SCALA_VERSION="2.13"
+KAFKA_VERSION="4.0.0"
+KAFKA_BASE_NAME="kafka_${KAFKA_SCALA_VERSION?}-${KAFKA_VERSION?}"
+KAFKA_TGZ_FILE="${KAFKA_BASE_NAME?}.tgz"
+KAFKA_TGZ_TEMP_FILE="/tmp/${KAFKA_TGZ_FILE?}"
+
+mkdir --parents "${HOME}/bin"
+wget --output-document "${KAFKA_TGZ_TEMP_FILE?}" https://downloads.apache.org/kafka/${KAFKA_VERSION?}/${KAFKA_TGZ_FILE?}
+tar -xvzf "${KAFKA_TGZ_TEMP_FILE?}" --directory "${HOME}/bin"
 
 cat <<EOF >> ${HOME}/.bashrc
 
-export KAFKA_BIN_PATH="${HOME}/bin/kafka_2.13-4.0.0/bin"
+export KAFKA_BIN_PATH="${HOME}/bin/${KAFKA_BASE_NAME?}/bin"
 
 if ! grep --quiet "\${KAFKA_BIN_PATH}" <<< "\${PATH}"; then
   export PATH="\${KAFKA_BIN_PATH}:\${PATH}"
@@ -206,6 +212,7 @@ export AZURE_EVENTHUBS_USERNAME='$ConnectionString'
 export AZURE_EVENTHUBS_TOPIC="<EVENT_HUB_NAME>"
 export SPRING_PROFILES_ACTIVE='default,eventhubs'
 export SPRING_KAFKA_CONSUMER_TOPIC='<EVENT_HUB_NAME>'
+export SPRING_KAFKA_PRODUCER_TOPIC="${SPRING_KAFKA_CONSUMER_TOPIC?}"
 export KAFKA_OPTS="-Djava.security.manager=allow" # Before Java 24
 ```
 
